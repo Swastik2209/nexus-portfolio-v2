@@ -3,339 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Swastik Mishra — Systems Architect & AI Builder</title>
+<title>Swastik Mishra — Systems Architect</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-:root{--bg:#0a0a0b;--surface:#111113;--surface2:#1a1a1e;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--text:#f5f5f5;--text-dim:#888;--text-muted:#555;--accent:#6366f1;--accent2:#818cf8;--gradient:linear-gradient(135deg,#6366f1,#8b5cf6,#a78bfa);--gold:#f59e0b;--green:#22c55e;--red:#ef4444}
+:root{--bg:#09090b;--surface:#111113;--border:rgba(255,255,255,0.06);--text:#fafafa;--dim:#71717a;--muted:#52525b;--accent:#6366f1;--accent2:#818cf8;--gradient:linear-gradient(135deg,#6366f1,#8b5cf6);--gold:#f59e0b}
 *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;cursor:none}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',system-ui,sans-serif;overflow-x:hidden;cursor:none}
+::selection{background:var(--accent);color:#fff}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--muted);border-radius:3px}
 
 /* Custom Cursor */
-.cursor{position:fixed;width:20px;height:20px;border:2px solid var(--accent);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:width 0.3s,height 0.3s,border-color 0.3s;mix-blend-mode:difference}
-.cursor.hover{width:50px;height:50px;border-color:var(--accent2)}
-.cursor-dot{position:fixed;width:6px;height:6px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:10001;transform:translate(-50%,-50%)}
+.cur{position:fixed;width:24px;height:24px;border:1.5px solid var(--accent);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:width 0.4s cubic-bezier(.4,0,.2,1),height 0.4s,border-color 0.3s;background:transparent}
+.cur.big{width:64px;height:64px;border-color:var(--accent2);background:rgba(99,102,241,0.05)}
+.dot{position:fixed;width:5px;height:5px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:10001;transform:translate(-50%,-50%)}
 
-/* Noise Overlay */
-.noise{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")}
+/* Grain */
+.grain{position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E")}
 
 /* Header */
-.header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 48px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);background:rgba(10,10,11,0.8);border-bottom:1px solid var(--border)}
-.header-logo{font-weight:700;font-size:1rem;letter-spacing:-0.02em}
-.header-nav{display:flex;gap:32px}
-.header-nav a{font-size:0.8rem;font-weight:500;color:var(--text-dim);text-decoration:none;transition:color 0.3s;position:relative}
-.header-nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width 0.3s}
-.header-nav a:hover{color:var(--text)}.header-nav a:hover::after{width:100%}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 48px;height:64px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(24px)saturate(180%);background:rgba(9,9,11,0.72);border-bottom:1px solid var(--border)}
+.hdr-logo{font-weight:700;font-size:1.05rem;letter-spacing:-0.02em;color:var(--text)}
+.hdr nav{display:flex;gap:28px}
+.hdr nav a{font-size:0.78rem;font-weight:500;color:var(--dim);text-decoration:none;transition:color 0.2s;padding:4px 0;position:relative}
+.hdr nav a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;background:var(--accent);transition:width 0.3s cubic-bezier(.4,0,.2,1)}
+.hdr nav a:hover{color:var(--text)}.hdr nav a:hover::after{width:100%}
 
 /* Hero */
-.hero{min-height:100vh;display:flex;align-items:center;position:relative}
-.hero-bg{position:absolute;inset:0;z-index:0}
-.hero-content{position:relative;z-index:1}
-.hero-tag{font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:24px;display:flex;align-items:center;gap:12px}
-.hero-tag::before{content:'';width:32px;height:1px;background:var(--accent)}
-.hero h1{font-size:clamp(4rem,10vw,8rem);font-weight:700;line-height:0.9;letter-spacing:-0.04em;margin-bottom:32px}
-.hero h1 .gradient{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:1.1rem;color:var(--text-dim);max-width:500px;line-height:1.7;margin-bottom:40px}
-.hero-cta{display:inline-flex;align-items:center;gap:12px;padding:16px 32px;background:var(--accent);color:white;border-radius:100px;font-size:0.9rem;font-weight:500;text-decoration:none;transition:all 0.4s;position:relative;overflow:hidden}
-.hero-cta::before{content:'';position:absolute;inset:0;background:var(--gradient);opacity:0;transition:opacity 0.4s}
-.hero-cta:hover::before{opacity:1}.hero-cta span{position:relative;z-index:1}
-.hero-stats{display:flex;gap:48px;margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}
-.hero-stat .num{font-size:2rem;font-weight:700}.hero-stat .label{font-size:0.75rem;color:var(--text-muted);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;padding-top:64px}
+.hero-inner{max-width:1200px;margin:0 auto;padding:0 48px;width:100%}
+.hero-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:10px;padding:6px 16px;border:1px solid var(--border);border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-bottom:28px}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(3.5rem,8vw,6.5rem);font-weight:700;line-height:.88;letter-spacing:-0.04em;margin-bottom:24px}
+.hero h1 .grad{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:1.05rem;color:var(--dim);max-width:480px;line-height:1.75;margin-bottom:36px}
+.hero-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:var(--accent);color:#fff;border-radius:100px;font-size:.88rem;font-weight:500;text-decoration:none;transition:all 0.4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.hero-btn::before{content:'';position:absolute;inset:0;background:var(--gradient);opacity:0;transition:opacity 0.4s}
+.hero-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(99,102,241,0.3)}.hero-btn:hover::before{opacity:1}.hero-btn span{position:relative;z-index:1}
+.hero-metrics{display:flex;gap:40px;margin-top:40px;padding-top:28px;border-top:1px solid var(--border)}
+.metric .val{font-size:1.8rem;font-weight:700;letter-spacing:-0.02em}.metric .lbl{font-size:.7rem;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em}
 
-/* About Section */
-.about{padding:120px 0;position:relative}
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-.about-photo{width:100%;aspect-ratio:3/4;border-radius:20px;overflow:hidden;position:relative}
-.about-photo img{width:100%;height:100%;object-fit:cover}
-.about-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,0.4));pointer-events:none}
-.about-content h2{font-size:clamp(2rem,4vw,3rem);font-weight:700;letter-spacing:-0.03em;margin-bottom:24px}
-.about-content p{color:var(--text-dim);line-height:1.8;margin-bottom:16px;font-size:1rem}
-.about-content strong{color:var(--text);font-weight:600}
-.about-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}
-.about-tag{padding:6px 14px;border:1px solid var(--border);border-radius:100px;font-size:0.8rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+/* Photo */
+.photo-wrap{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:3/4}
+.photo-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s cubic-bezier(.4,0,.2,1)}
+.photo-wrap:hover img{transform:scale(1.03)}
+.photo-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,0.5));pointer-events:none;border-radius:24px}
+.photo-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px;z-index:1}
+.photo-name{font-size:1.1rem;font-weight:600;color:#fff}.photo-role{font-size:.8rem;color:rgba(255,255,255,0.5);font-family:'JetBrains Mono',monospace;margin-top:4px}
+
+/* Sections */
+.sec{padding:120px 0;position:relative}
+.container{max-width:1200px;margin:0 auto;padding:0 48px}
+.label{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.label::before{content:'';width:24px;height:1px;background:var(--accent)}
+.title{font-size:clamp(2rem,4vw,3.2rem);font-weight:700;line-height:1.05;letter-spacing:-0.03em;margin-bottom:24px}
+
+/* About */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;margin-top:48px}
+.about-text{font-size:1rem;color:var(--dim);line-height:1.8}
+.about-text p{margin-bottom:16px}.about-text strong{color:var(--text);font-weight:600}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}
+.tag{padding:5px 12px;border:1px solid var(--border);border-radius:100px;font-size:.75rem;color:var(--dim);font-family:'JetBrains Mono',monospace;transition:border-color 0.3s}
+.tag:hover{border-color:var(--accent)}
 
 /* Projects */
-.projects{padding:120px 0}
-.project-card{display:grid;grid-template-columns:1fr 1fr;gap:80px;padding:80px 0;border-bottom:1px solid var(--border);align-items:center}
-.project-card:nth-child(even){direction:rtl}
-.project-card:nth-child(even) > *{direction:ltr}
-.project-visual{height:400px;border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--border);position:relative;transition:transform 0.6s cubic-bezier(0.16,1,0.3,1)}
-.project-visual:hover{transform:scale(1.02)}
-.project-info h3{font-size:2rem;font-weight:600;margin-bottom:12px}
-.project-info .tag{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px}
-.project-info p{color:var(--text-dim);line-height:1.7;margin-bottom:24px;max-width:480px}
-.project-links{display:flex;gap:16px}
-.project-links a{font-size:0.85rem;font-weight:500;color:var(--text);text-decoration:none;transition:color 0.3s}
-.project-links a:hover{color:var(--accent)}
+.proj{display:grid;grid-template-columns:1fr 1.2fr;gap:64px;padding:80px 0;border-bottom:1px solid var(--border);align-items:center}
+.proj:nth-child(even){direction:rtl}.proj:nth-child(even)>*{direction:ltr}
+.proj-vis{height:380px;border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--border);transition:transform 0.5s cubic-bezier(.4,0,.2,1),box-shadow 0.5s}
+.proj-vis:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.proj-info h3{font-size:1.8rem;font-weight:600;margin-bottom:8px;letter-spacing:-.02em}
+.proj-info .tag-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.proj-info p{color:var(--dim);line-height:1.7;max-width:440px;margin-bottom:20px;font-size:.92rem}
+.proj-links{display:flex;gap:16px}.proj-links a{font-size:.85rem;font-weight:500;color:var(--text);text-decoration:none;transition:color 0.2s}.proj-links a:hover{color:var(--accent)}
 
 /* Skills */
-.skills{padding:120px 0}
-.skills-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:64px}
-.skill-item{padding:32px;background:var(--bg);transition:background 0.3s;display:flex;flex-direction:column;gap:12px}
-.skill-item:hover{background:var(--surface)}
-.skill-icon{width:48px;height:48px;border-radius:12px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:all 0.3s}
-.skill-item:hover .skill-icon{background:var(--accent);border-color:var(--accent)}
-.skill-name{font-weight:600;font-size:0.95rem}
-.skill-level{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted);letter-spacing:0.05em}
+.skill-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:48px}
+.skill{padding:28px;background:var(--bg);transition:background 0.3s}
+.skill:hover{background:var(--surface)}
+.skill-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.skill-icon{width:40px;height:40px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all 0.3s}
+.skill:hover .skill-icon{background:var(--accent);border-color:var(--accent)}
+.skill-name{font-weight:600;font-size:.9rem}
+.skill-lv{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted)}
 
 /* Experience */
-.experience{padding:120px 0}
-.exp-item{display:grid;grid-template-columns:160px 1fr;gap:40px;padding:32px 0;border-bottom:1px solid var(--border)}
-.exp-date{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--text-muted);padding-top:4px}
-.exp-content h3{font-size:1.1rem;font-weight:600;margin-bottom:8px}
-.exp-content p{color:var(--text-dim);font-size:0.9rem;line-height:1.7}
+.exp{padding:32px 0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:140px 1fr;gap:32px}
+.exp:last-child{border-bottom:none}
+.exp-date{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--muted);padding-top:2px}
+.exp h4{font-size:1rem;font-weight:600;margin-bottom:4px}
+.exp p{color:var(--dim);font-size:.88rem;line-height:1.7}
 
 /* Contact */
-.contact{padding:120px 0}
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-top:64px}
-.contact-links{display:flex;flex-direction:column}
-.contact-link{padding:20px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:var(--text);transition:all 0.3s}
-.contact-link:hover{padding-left:16px;color:var(--accent)}
-.contact-link span:last-child{font-size:1.2rem;color:var(--text-muted);transition:transform 0.3s}
-.contact-link:hover span:last-child{transform:translateX(8px)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:48px}
+.link-row{padding:16px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:var(--text);transition:all 0.3s;font-size:.88rem;font-weight:500}
+.link-row:hover{padding-left:12px;color:var(--accent)}
+.link-row .arrow{color:var(--muted);transition:transform 0.3s}.link-row:hover .arrow{transform:translateX(6px)}
 
 /* Footer */
-.footer{padding:40px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.footer p{font-size:0.8rem;color:var(--text-muted)}
-.footer-links{display:flex;gap:24px}.footer-links a{font-size:0.8rem;color:var(--text-dim);text-decoration:none}.footer-links a:hover{color:var(--text)}
+.ftr{padding:32px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
+.ftr a{color:var(--dim);text-decoration:none;transition:color 0.2s}.ftr a:hover{color:var(--text)}
 
-/* Animations */
-.reveal{opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.16,1,0.3,1)}.reveal.active{opacity:1;transform:none}
+/* Reveal */
+.rv{opacity:0;transform:translateY(30px);transition:all 0.7s cubic-bezier(.4,0,.2,1)}.rv.on{opacity:1;transform:none}
 
-/* Responsive */
-@media(max-width:768px){.container{padding:0 24px}.hero h1{font-size:clamp(2.5rem,8vw,4rem)}.about-grid,.project-card,.contact-grid{grid-template-columns:1fr;gap:32px}.project-card:nth-child(even){direction:ltr}.skills-grid{grid-template-columns:repeat(2,1fr)}.exp-item{grid-template-columns:1fr;gap:12px}.cursor,.cursor-dot{display:none}body{cursor:auto}}
+@media(max-width:768px){.container{padding:0 20px}.hero-grid,.about-grid,.contact-grid{grid-template-columns:1fr;gap:32px}.proj{grid-template-columns:1fr;gap:24px}.proj:nth-child(even){direction:ltr}.skill-grid{grid-template-columns:1fr 1fr}.exp{grid-template-columns:1fr;gap:8px}.hdr{padding:0 20px}.hdr nav{gap:16px}.sec{padding:80px 0}.cur,.dot{display:none}body{cursor:auto}}
 </style>
 </head>
 <body>
-<div class="cursor" id="cursor"></div>
-<div class="cursor-dot" id="cursor-dot"></div>
-<div class="noise"></div>
-<canvas id="bg-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
+<div class="cur" id="cur"></div><div class="dot" id="dot"></div><div class="grain"></div>
 
-<header class="header">
-<div class="header-logo">Swastik Mishra</div>
-<nav class="header-nav"><a href="#about">About</a><a href="#work">Work</a><a href="#skills">Skills</a><a href="#experience">Experience</a><a href="#contact">Contact</a></nav>
+<header class="hdr">
+<div class="hdr-logo">Swastik Mishra</div>
+<nav><a href="#about">About</a><a href="#work">Work</a><a href="#skills">Skills</a><a href="#exp">Experience</a><a href="#contact">Contact</a></nav>
 </header>
 
-<section class="section hero" id="hero">
-<div class="container"><div class="hero-content">
-<div class="hero-tag">Systems Architect · AI · Quantitative Finance</div>
-<h1>Building<br>systems that<br><span class="gradient">think.</span></h1>
-<p class="hero-sub">Physics honours student at Azim Premji University (9.0 CGPA). Building AI automation pipelines, FastAPI backends, and quantitative finance systems. Currently running NEXUS AI — an autonomous business targeting $1M ARR.</p>
-<a href="#work" class="hero-cta"><span>View Selected Work</span></a>
-<div class="hero-stats">
-<div class="hero-stat"><div class="num">9.0</div><div class="label">CGPA</div></div>
-<div class="hero-stat"><div class="num">5+</div><div class="label">Systems Built</div></div>
-<div class="hero-stat"><div class="num">$1M</div><div class="label">Revenue Target</div></div>
+<!-- HERO -->
+<section class="hero">
+<div class="hero-inner"><div class="hero-grid">
+<div>
+<div class="hero-badge">Systems Architect · AI · Quantitative Finance</div>
+<h1>Building<br>systems that<br><span class="grad">think.</span></h1>
+<p class="hero-desc">Physics honours student at Azim Premji University (9.0 CGPA). Building AI automation pipelines, FastAPI backends, and quantitative finance systems. Running NEXUS AI — autonomous business targeting $1M ARR.</p>
+<a href="#work" class="hero-btn"><span>View Selected Work</span></a>
+<div class="hero-metrics">
+<div class="metric"><div class="val">9.0</div><div class="lbl">CGPA</div></div>
+<div class="metric"><div class="val">5+</div><div class="lbl">Systems Built</div></div>
+<div class="metric"><div class="val">$1M</div><div class="lbl">Revenue Target</div></div>
 </div>
+</div>
+<div class="photo-wrap"><img src="photo.jpg" alt="Swastik Mishra"><div class="photo-overlay"><div class="photo-name">Swastik Mishra</div><div class="photo-role">Systems Architect & AI Builder</div></div></div>
 </div></div>
 </section>
 
-<section class="about" id="about">
-<div class="container"><div class="about-grid">
-<div class="about-photo"><img src="photo.jpg" alt="Swastik Mishra" /></div>
-<div class="about-content">
-<h2>Physics meets AI<br>meets business</h2>
+<!-- ABOUT -->
+<section class="sec" id="about">
+<div class="container">
+<div class="label">About</div>
+<div class="title">Physics meets AI meets business</div>
+<div class="about-grid">
+<div class="about-text">
 <p>Physics honours student maintaining a <strong>9.0 CGPA</strong> at Azim Premji University, combining rigorous quantitative training with hands-on software engineering.</p>
 <p>I build AI automation pipelines, FastAPI backends, and payment-integrated web platforms for international clients. My work spans from <strong>Black-Scholes derivatives pricing</strong> to building self-running AI business empires.</p>
 <p>Currently building <strong>NEXUS AI</strong> — an autonomous AI company with 12+ SaaS products targeting $1M ARR. The system runs 24/7, generating revenue through automated lead generation, AI content creation, and enterprise solutions.</p>
 <p>Research collaboration with <strong>Prof. KC Adaina</strong> in environmental economics. Authored a climate economics paper on Himalayan glacial retreat.</p>
-<div class="about-tags">
-<span class="about-tag">B.Sc. Physics — 9.0 CGPA</span>
-<span class="about-tag">Azim Premji University</span>
-<span class="about-tag">NEXUS AI Founder</span>
-<span class="about-tag">Quantitative Finance</span>
-<span class="about-tag">Climate Economics</span>
+<div class="tags">
+<span class="tag">B.Sc. Physics — 9.0 CGPA</span>
+<span class="tag">Azim Premji University</span>
+<span class="tag">NEXUS AI Founder</span>
+<span class="tag">Quantitative Finance</span>
+<span class="tag">Climate Economics</span>
+<span class="tag">FastAPI · Python · AI</span>
+</div>
+</div>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--accent);letter-spacing:.1em;margin-bottom:16px">KEY ACHIEVEMENTS</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;gap:12px;align-items:start"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0"></div><div><div style="font-weight:600;font-size:.9rem">NEXUS AI — $1M ARR Target</div><div style="color:var(--dim);font-size:.85rem">12+ SaaS products, autonomous revenue</div></div></div>
+<div style="display:flex;gap:12px;align-items:start"><div style="width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:6px;flex-shrink:0"></div><div><div style="font-weight:600;font-size:.9rem">Research with Prof. KC Adaina</div><div style="color:var(--dim);font-size:.85rem">Environmental economics collaboration</div></div></div>
+<div style="display:flex;gap:12px;align-items:start"><div style="width:8px;height:8px;border-radius:50%;background:#22c55e;margin-top:6px;flex-shrink:0"></div><div><div style="font-weight:600;font-size:.9rem">Climate Economics Paper</div><div style="color:var(--dim);font-size:.85rem">Himalayan glacial retreat study</div></div></div>
+<div style="display:flex;gap:12px;align-items:start"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0"></div><div><div style="font-weight:600;font-size:.9rem">LaTeX/TikZ Documentation</div><div style="color:var(--dim);font-size:.85rem">PHY-203 wave optics, Fourier optics</div></div></div>
+<div style="display:flex;gap:12px;align-items:start"><div style="width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:6px;flex-shrink:0"></div><div><div style="font-weight:600;font-size:.9rem">Quantitative Finance</div><div style="color:var(--dim);font-size:.85rem">Black-Scholes, GARCH, portfolio optimization</div></div></div>
 </div>
 </div>
 </div></div>
 </section>
 
-<section class="projects" id="work">
+<!-- WORK -->
+<section class="sec" id="work">
 <div class="container">
-<div class="hero-tag" style="margin-bottom:48px">Selected Work</div>
+<div class="label">Selected Work</div>
+<div class="title">Things I've built</div>
 
-<div class="project-card reveal">
-<div class="project-visual" style="background:linear-gradient(135deg,#1e1b4b,#312e81)">
-<div style="padding:32px;height:100%;display:flex;flex-direction:column;justify-content:space-between">
-<div style="display:flex;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:#ef4444"></div><div style="width:8px;height:8px;border-radius:50%;background:#eab308"></div><div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div></div>
-<div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:20px">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-<div style="text-align:center"><div style="font-size:1.5rem;font-weight:700;color:#6366f1">$499/mo</div><div style="font-size:0.7rem;color:#888">Revenue</div></div>
-<div style="text-align:center"><div style="font-size:1.5rem;font-weight:700;color:#6366f1">12</div><div style="font-size:0.7rem;color:#888">Clients</div></div>
-<div style="text-align:center"><div style="font-size:1.5rem;font-weight:700;color:#6366f1">1,247</div><div style="font-size:0.7rem;color:#888">Leads</div></div>
-</div></div></div></div>
-<div class="project-info"><div class="tag">2025 — Present · AI · SaaS</div><h3>NEXUS AI</h3><p>Autonomous AI business empire with 12+ SaaS products. Automated lead generation, AI content creation, enterprise solutions.</p><div class="project-links"><a href="https://github.com/Swastik2209">Source →</a><a href="https://nexus-image-gen-two.vercel.app">Live →</a></div></div>
+<div class="proj rv"><div class="proj-vis" style="background:linear-gradient(135deg,#1e1b4b,#312e81)"><div style="padding:28px;height:100%;display:flex;flex-direction:column;justify-content:space-between"><div style="display:flex;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:#ef4444"></div><div style="width:8px;height:8px;border-radius:50%;background:#eab308"></div><div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div></div><div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:20px"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#818cf8">$499/mo</div><div style="font-size:.65rem;color:#888">Revenue</div></div><div style="text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#818cf8">12</div><div style="font-size:.65rem;color:#888">Clients</div></div><div style="text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#818cf8">1,247</div><div style="font-size:.65rem;color:#888">Leads</div></div></div></div></div></div>
+<div class="proj-info"><div class="tag-label">2025 — Present · AI · SaaS</div><h3>NEXUS AI</h3><p>Autonomous AI business empire with 12+ SaaS products. Automated lead generation, AI content creation, enterprise solutions.</p><div class="proj-links"><a href="https://github.com/Swastik2209">Source →</a><a href="https://nexus-image-gen-two.vercel.app">Live →</a></div></div>
 </div>
 
-<div class="project-card reveal">
-<div class="project-visual" style="background:linear-gradient(135deg,#064e3b,#065f46)">
-<div style="padding:32px;height:100%;display:flex;flex-direction:column;gap:16px">
-<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:0.8rem;font-weight:600;color:#fff">Data Pipeline</span><span style="font-size:0.7rem;color:#22c55e;font-family:'JetBrains Mono'">RUNNING</span></div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;flex:1">
-<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;color:#fff"><div style="font-size:0.6rem;color:#888;margin-bottom:4px">SOURCES</div><div style="font-size:0.8rem;line-height:1.8;color:#ccc"><div>CoinGecko ✓</div><div>FDA Data ✓</div><div>FRED API ✓</div></div></div>
-<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;color:#fff"><div style="font-size:0.6rem;color:#888;margin-bottom:4px">ENDPOINTS</div><div style="font-size:0.8rem;line-height:1.8;color:#ccc"><div>/api/leads</div><div>/api/revenue</div><div>/api/scrape</div></div></div>
-<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;color:#fff"><div style="font-size:0.6rem;color:#888;margin-bottom:4px">STATUS</div><div style="font-size:0.8rem;line-height:1.8;color:#ccc"><div>Uptime <span style="color:#22c55e">99.9%</span></div><div>Requests <span style="color:#22c55e">12.4K</span></div></div></div>
-</div></div></div></div>
-<div class="project-info"><div class="tag">2025 — Present · FastAPI · Ollama</div><h3>MiMo / Hermes</h3><p>Ollama-based system with scrapers for CoinGecko, FDA, and FRED data. Scheduled agents, FastAPI endpoints.</p><div class="project-links"><a href="https://github.com/Swastik2209">Source →</a></div></div>
+<div class="proj rv"><div class="proj-vis" style="background:linear-gradient(135deg,#064e3b,#065f46)"><div style="padding:24px;height:100%;display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;font-weight:600;color:#fff">Data Pipeline</span><span style="font-size:.65rem;color:#22c55e;font-family:'JetBrains Mono'">RUNNING</span></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;flex:1"><div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;color:#fff"><div style="font-size:.6rem;color:#888;margin-bottom:4px">SOURCES</div><div style="font-size:.8rem;line-height:1.8;color:#ccc"><div>CoinGecko ✓</div><div>FDA Data ✓</div><div>FRED API ✓</div></div></div><div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;color:#fff"><div style="font-size:.6rem;color:#888;margin-bottom:4px">ENDPOINTS</div><div style="font-size:.8rem;line-height:1.8;color:#ccc"><div>/api/leads</div><div>/api/revenue</div><div>/api/scrape</div></div></div><div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;color:#fff"><div style="font-size:.6rem;color:#888;margin-bottom:4px">STATUS</div><div style="font-size:.8rem;line-height:1.8;color:#ccc"><div>Uptime <span style="color:#22c55e">99.9%</span></div><div>Requests <span style="color:#22c55e">12.4K</span></div></div></div></div></div></div></div>
+<div class="proj-info"><div class="tag-label">2025 — Present · FastAPI · Ollama</div><h3>MiMo / Hermes</h3><p>Ollama-based system with scrapers for CoinGecko, FDA, and FRED data. Scheduled agents, FastAPI endpoints.</p><div class="proj-links"><a href="https://github.com/Swastik2209">Source →</a></div></div>
 </div>
 
-<div class="project-card reveal">
-<div class="project-visual" style="background:linear-gradient(135deg,#1e1b4b,#581c87)">
-<div style="padding:24px;height:100%">
-<div style="background:rgba(0,0,0,0.4);border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#22c55e;line-height:1.8;height:100%">
-<div style="color:#888">def black_scholes(S, K, T, r, sigma):</div>
-<div>  d1 = (log(S/K) + (r + σ²/2)*T)</div>
-<div>    / (σ * sqrt(T))</div>
-<div>  d2 = d1 - σ * sqrt(T)</div>
-<div style="margin-top:8px">  return S*N(d1) - K*e^(-rT)*N(d2)</div>
-<div style="margin-top:12px;color:#888"># Portfolio optimization</div>
-<div>  weights = optimize(portfolio)</div>
-<div>  sharpe = returns / volatility</div>
-<div style="margin-top:8px;color:#555">>>> backtest(SPY, period="5Y")</div>
-<div style="color:#22c55e">Sharpe: 1.42 | CAGR: 18.7%</div>
-</div></div></div></div>
-<div class="project-info"><div class="tag">2025 — Present · Python · Quant</div><h3>Quantitative Finance Toolkit</h3><p>Brownian motion simulator, NIFTY drawdown analysis, and portfolio-optimization models. Black-Scholes pricing.</p><div class="project-links"><a href="https://github.com/Swastik2209">Source →</a></div></div>
+<div class="proj rv"><div class="proj-vis" style="background:linear-gradient(135deg,#1e1b4b,#581c87)"><div style="padding:24px;height:100%"><div style="background:rgba(0,0,0,0.4);border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:#22c55e;line-height:1.8;height:100%"><div style="color:#888">def black_scholes(S, K, T, r, sigma):</div><div>&nbsp;&nbsp;d1 = (log(S/K) + (r + σ²/2)*T)</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ (σ * sqrt(T))</div><div>&nbsp;&nbsp;d2 = d1 - σ * sqrt(T)</div><div style="margin-top:6px">&nbsp;&nbsp;return S*N(d1) - K*e^(-rT)*N(d2)</div><div style="margin-top:10px;color:#888"># Portfolio optimization</div><div>&nbsp;&nbsp;weights = optimize(portfolio)</div><div>&nbsp;&nbsp;sharpe = returns / volatility</div><div style="margin-top:8px;color:#555">>>> backtest(SPY, period="5Y")</div><div style="color:#22c55e">Sharpe: 1.42 | CAGR: 18.7%</div></div></div></div></div>
+<div class="proj-info"><div class="tag-label">2025 — Present · Python · Quant</div><h3>Quantitative Finance Toolkit</h3><p>Brownian motion simulator, NIFTY drawdown analysis, and portfolio-optimization models. Black-Scholes pricing.</p><div class="proj-links"><a href="https://github.com/Swastik2209">Source →</a></div></div>
 </div>
 
-<div class="project-card reveal">
-<div class="project-visual" style="background:linear-gradient(135deg,#1e1b4b,#1e3a5f)">
-<div style="padding:24px;height:100%;display:flex;flex-direction:column">
-<div style="display:flex;justify-content:space-between;margin-bottom:16px"><span style="font-size:0.8rem;font-weight:600;color:#fff">India GDP vs Inflation</span><span style="font-size:0.7rem;color:#888;font-family:'JetBrains Mono'">INTERACTIVE</span></div>
-<div style="flex:1;display:flex;flex-direction:column;gap:8px">
-<div style="display:flex;align-items:center;gap:10px"><span style="font-size:0.7rem;color:#888;width:36px;font-family:'JetBrains Mono'">2024</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden"><div style="width:72%;height:100%;background:var(--accent);border-radius:4px"></div></div><span style="font-size:0.75rem;font-weight:600;width:36px;text-align:right">7.2%</span></div>
-<div style="display:flex;align-items:center;gap:10px"><span style="font-size:0.7rem;color:#888;width:36px;font-family:'JetBrains Mono'">2023</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden"><div style="width:78%;height:100%;background:var(--accent);border-radius:4px"></div></div><span style="font-size:0.75rem;font-weight:600;width:36px;text-align:right">7.8%</span></div>
-<div style="display:flex;align-items:center;gap:10px"><span style="font-size:0.7rem;color:#888;width:36px;font-family:'JetBrains Mono'">2022</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden"><div style="width:68%;height:100%;background:var(--accent);border-radius:4px"></div></div><span style="font-size:0.75rem;font-weight:600;width:36px;text-align:right">6.8%</span></div>
-<div style="display:flex;align-items:center;gap:10px"><span style="font-size:0.7rem;color:#888;width:36px;font-family:'JetBrains Mono'">2021</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden"><div style="width:85%;height:100%;background:var(--accent);border-radius:4px"></div></div><span style="font-size:0.75rem;font-weight:600;width:36px;text-align:right">8.5%</span></div>
-<div style="display:flex;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)">
-<div style="text-align:center"><div style="font-size:1.2rem;font-weight:700;color:#fff">$3.7T</div><div style="font-size:0.6rem;color:#888">GDP 2024</div></div>
-<div style="text-align:center"><div style="font-size:1.2rem;font-weight:700;color:#fff">5th</div><div style="font-size:0.6rem;color:#888">World Rank</div></div>
-<div style="text-align:center"><div style="font-size:1.2rem;font-weight:700;color:#fff">1.4B</div><div style="font-size:0.6rem;color:#888">Population</div></div>
-</div></div></div></div></div>
-<div class="project-info"><div class="tag">2025 — Present · Data Viz · Economics</div><h3>IndiaEcon Intelligence</h3><p>Scroll-driven interactive economics platform translating macroeconomic data into visual exploration experiences.</p><div class="project-links"><a href="https://github.com/Swastik2209">Source →</a></div></div>
+<div class="proj rv"><div class="proj-vis" style="background:linear-gradient(135deg,#1e1b4b,#1e3a5f)"><div style="padding:24px;height:100%;display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><span style="font-size:.8rem;font-weight:600;color:#fff">India GDP vs Inflation</span><span style="font-size:.65rem;color:#888;font-family:'JetBrains Mono'">INTERACTIVE</span></div><div style="flex:1;display:flex;flex-direction:column;gap:8px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:.65rem;color:#888;width:36px;font-family:'JetBrains Mono'">2024</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden"><div style="width:72%;height:100%;background:var(--accent);border-radius:4px"></div></div><span style="font-size:.7rem;font-weight:600;width:36px;text-align:right">7.2%</span></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:.65rem;color:#888;width:36px;font-family:'JetBrains Mono'">2023</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden"><div style="width:78%;height:100%;background:var(--accent);border-radius:4px"></div></div><span style="font-size:.7rem;font-weight:600;width:36px;text-align:right">7.8%</span></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:.65rem;color:#888;width:36px;font-family:'JetBrains Mono'">2022</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden"><div style="width:68%;height:100%;background:var(--accent);border-radius:4px"></div></div><span style="font-size:.7rem;font-weight:600;width:36px;text-align:right">6.8%</span></div><div style="display:flex;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)"><div style="text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#fff">$3.7T</div><div style="font-size:.55rem;color:#888">GDP 2024</div></div><div style="text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#fff">5th</div><div style="font-size:.55rem;color:#888">World Rank</div></div><div style="text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#fff">1.4B</div><div style="font-size:.55rem;color:#888">Population</div></div></div></div></div></div></div>
+<div class="proj-info"><div class="tag-label">2025 — Present · Data Viz · Economics</div><h3>IndiaEcon Intelligence</h3><p>Scroll-driven interactive economics platform translating macroeconomic data into visual exploration.</p><div class="proj-links"><a href="https://github.com/Swastik2209">Source →</a></div></div>
 </div>
 
-<div class="project-card reveal" style="border-bottom:none">
-<div class="project-visual" style="background:linear-gradient(135deg,#1e1b4b,#1e3a5f)">
-<div style="padding:24px;height:100%;display:flex;flex-direction:column;justify-content:space-between">
-<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:0.8rem;font-weight:600;color:#fff">Palo Alto Central Dental</span><span style="font-size:0.7rem;color:#22c55e;font-family:'JetBrains Mono'">PRODUCTION</span></div>
-<div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:20px;color:#fff">
-<div style="font-size:0.6rem;color:#888;margin-bottom:4px;font-family:'JetBrains Mono'">NEXT APPOINTMENT</div>
-<div style="font-size:1rem;font-weight:600;margin-bottom:8px">Dr. Smith — Cleaning</div>
-<div style="display:flex;gap:12px;font-size:0.75rem;color:#888;margin-bottom:16px"><span>Jul 15, 2026</span><span>10:30 AM</span><span>Room 4</span></div>
-<div style="display:flex;gap:8px">
-<div style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#22c55e">$12.4K</div><div style="font-size:0.6rem;color:#888">Revenue</div></div>
-<div style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#22c55e">342</div><div style="font-size:0.6rem;color:#888">Patients</div></div>
-<div style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#22c55e">98%</div><div style="font-size:0.6rem;color:#888">Satisfaction</div></div>
-</div></div></div></div>
-<div class="project-info"><div class="tag">2025 — Present · Web Dev · Payments</div><h3>Client Demo — Palo Alto Central Dental</h3><p>Live production demo site for booking flows and payment integration. Built for US-based freelance clients.</p><div class="project-links"><a href="https://github.com/Swastik2209">Source →</a></div></div>
+<div class="proj rv" style="border-bottom:none"><div class="proj-vis" style="background:linear-gradient(135deg,#1e1b4b,#1e3a5f)"><div style="padding:24px;height:100%;display:flex;flex-direction:column;justify-content:space-between"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;font-weight:600;color:#fff">Palo Alto Central Dental</span><span style="font-size:.65rem;color:#22c55e;font-family:'JetBrains Mono'">PRODUCTION</span></div><div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:20px;color:#fff"><div style="font-size:.6rem;color:#888;margin-bottom:4px;font-family:'JetBrains Mono'">NEXT APPOINTMENT</div><div style="font-size:1rem;font-weight:600;margin-bottom:8px">Dr. Smith — Cleaning</div><div style="display:flex;gap:12px;font-size:.7rem;color:#888;margin-bottom:16px"><span>Jul 15, 2026</span><span>10:30 AM</span><span>Room 4</span></div><div style="display:flex;gap:8px"><div style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;text-align:center"><div style="font-size:1rem;font-weight:700;color:#22c55e">$12.4K</div><div style="font-size:.55rem;color:#888">Revenue</div></div><div style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;text-align:center"><div style="font-size:1rem;font-weight:700;color:#22c55e">342</div><div style="font-size:.55rem;color:#888">Patients</div></div><div style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;text-align:center"><div style="font-size:1rem;font-weight:700;color:#22c55e">98%</div><div style="font-size:.55rem;color:#888">Satisfaction</div></div></div></div></div></div></div>
+<div class="proj-info"><div class="tag-label">2025 — Present · Web Dev · Payments</div><h3>Client Demo — Palo Alto Central Dental</h3><p>Live production demo site for booking flows and payment integration. Built for US-based freelance clients.</p><div class="proj-links"><a href="https://github.com/Swastik2209">Source →</a></div></div>
 </div>
 </div></div>
 </section>
 
-<section class="skills" id="skills">
+<!-- SKILLS -->
+<section class="sec" id="skills">
 <div class="container">
-<div class="hero-tag">Technical Arsenal</div>
-<h2 style="font-size:clamp(2rem,4vw,3.5rem);font-weight:700;letter-spacing:-0.03em;margin-top:12px">Tools & technologies</h2>
-<div class="skills-grid">
-<div class="skill-item"><div class="skill-icon">Py</div><div class="skill-name">Python</div><div class="skill-level">Expert</div></div>
-<div class="skill-item"><div class="skill-icon">⚡</div><div class="skill-name">FastAPI</div><div class="skill-level">Expert</div></div>
-<div class="skill-item"><div class="skill-icon">🤖</div><div class="skill-name">AI / ML Pipelines</div><div class="skill-level">Advanced</div></div>
-<div class="skill-item"><div class="skill-icon">📊</div><div class="skill-name">Quantitative Finance</div><div class="skill-level">Advanced</div></div>
-<div class="skill-item"><div class="skill-icon">TeX</div><div class="skill-name">LaTeX / TikZ</div><div class="skill-level">Expert</div></div>
-<div class="skill-item"><div class="skill-icon">JS</div><div class="skill-name">JavaScript</div><div class="skill-level">Proficient</div></div>
-<div class="skill-item"><div class="skill-icon">💳</div><div class="skill-name">Razorpay / Stripe</div><div class="skill-level">Advanced</div></div>
-<div class="skill-item"><div class="skill-icon">📈</div><div class="skill-name">Data Visualization</div><div class="skill-level">Advanced</div></div>
+<div class="label">Technical Arsenal</div>
+<div class="title">Tools & technologies</div>
+<div class="skill-grid">
+<div class="skill"><div class="skill-head"><div class="skill-icon">Py</div><div><div class="skill-name">Python</div><div class="skill-lv">Expert</div></div></div></div>
+<div class="skill"><div class="skill-head"><div class="skill-icon">⚡</div><div><div class="skill-name">FastAPI</div><div class="skill-lv">Expert</div></div></div></div>
+<div class="skill"><div class="skill-head"><div class="skill-icon">🤖</div><div><div class="skill-name">AI / ML Pipelines</div><div class="skill-lv">Advanced</div></div></div></div>
+<div class="skill"><div class="skill-head"><div class="skill-icon">📊</div><div><div class="skill-name">Quantitative Finance</div><div class="skill-lv">Advanced</div></div></div></div>
+<div class="skill"><div class="skill-head"><div class="skill-icon">TeX</div><div><div class="skill-name">LaTeX / TikZ</div><div class="skill-lv">Expert</div></div></div></div>
+<div class="skill"><div class="skill-head"><div class="skill-icon">JS</div><div><div class="skill-name">JavaScript</div><div class="skill-lv">Proficient</div></div></div></div>
+<div class="skill"><div class="skill-head"><div class="skill-icon">💳</div><div><div class="skill-name">Razorpay / Stripe</div><div class="skill-lv">Advanced</div></div></div></div>
+<div class="skill"><div class="skill-head"><div class="skill-icon">📈</div><div><div class="skill-name">Data Visualization</div><div class="skill-lv">Advanced</div></div></div></div>
 </div></div></div>
 </section>
 
-<section class="experience" id="experience">
+<!-- EXPERIENCE -->
+<section class="sec" id="exp">
 <div class="container">
-<div class="hero-tag">Experience</div>
-<h2 style="font-size:clamp(2rem,4vw,3.5rem);font-weight:700;letter-spacing:-0.03em;margin-top:12px">Where I've been</h2>
-<div style="margin-top:64px">
-<div class="exp-item reveal"><div class="exp-date">2025 — Present</div><div class="exp-content"><h3>Founder, NEXUS AI</h3><p>Autonomous AI business with 12+ SaaS products. Full-stack development, AI pipelines, payment systems.</p></div></div>
-<div class="exp-item reveal"><div class="exp-date">2025 — Present</div><div class="exp-content"><h3>AI Systems Builder</h3><p>AI automation pipelines, FastAPI backends, payment-integrated platforms for international clients.</p></div></div>
-<div class="exp-item reveal"><div class="exp-date">2025 — Present</div><div class="exp-content"><h3>Quantitative Finance Researcher</h3><p>Self-directed depth in derivatives pricing, volatility modelling, and portfolio optimization.</p></div></div>
-<div class="exp-item reveal" style="border-bottom:none"><div class="exp-date">2024 — Present</div><div class="exp-content"><h3>B.Sc. Physics, Azim Premji University</h3><p>9.0 CGPA. Research with Prof. KC Adaina. Climate economics paper on Himalayan glacial retreat.</p></div></div>
+<div class="label">Experience</div>
+<div class="title">Where I've been</div>
+<div style="margin-top:48px">
+<div class="exp rv"><div class="exp-date">2025 — Present</div><div><h4>Founder, NEXUS AI</h4><p>Autonomous AI business with 12+ SaaS products. Full-stack development, AI pipelines, payment systems.</p></div></div>
+<div class="exp rv"><div class="exp-date">2025 — Present</div><div><h4>AI Systems Builder</h4><p>AI automation pipelines, FastAPI backends, payment-integrated platforms for international clients.</p></div></div>
+<div class="exp rv"><div class="exp-date">2025 — Present</div><div><h4>Quantitative Finance Researcher</h4><p>Self-directed depth in derivatives pricing, volatility modelling, and portfolio optimization.</p></div></div>
+<div class="exp rv"><div class="exp-date">2024 — Present</div><div><h4>B.Sc. Physics, Azim Premji University</h4><p>9.0 CGPA. Research with Prof. KC Adaina. Climate economics paper on Himalayan glacial retreat.</p></div></div>
 </div></div></div>
 </section>
 
-<section class="contact" id="contact">
+<!-- CONTACT -->
+<section class="sec" id="contact">
 <div class="container">
-<div class="hero-tag">Contact</div>
-<h2 style="font-size:clamp(2rem,4vw,3.5rem);font-weight:700;letter-spacing:-0.03em;margin-top:12px">Let's work together</h2>
+<div class="label">Contact</div>
+<div class="title">Let's work together</div>
 <div class="contact-grid">
-<div><p style="color:var(--text-dim);line-height:1.7;max-width:400px;margin-top:24px">Available for freelance projects, consulting, and collaboration.</p></div>
-<div class="contact-links">
-<a href="mailto:swastikmishra3558@gmail.com" class="contact-link"><span>Email</span><span>→</span></a>
-<a href="https://github.com/Swastik2209" class="contact-link"><span>GitHub</span><span>→</span></a>
-<a href="https://t.me/AutoMarketing2209Bot" class="contact-link"><span>Telegram</span><span>→</span></a>
-<a href="https://nexus-image-gen-two.vercel.app" class="contact-link"><span>NEXUS AI Products</span><span>→</span></a>
-</div></div></div></div>
+<div><p style="color:var(--dim);line-height:1.7;max-width:400px;margin-top:24px;font-size:1rem">Available for freelance projects, consulting, and collaboration.</p></div>
+<div>
+<a href="mailto:swastikmishra3558@gmail.com" class="link-row"><span>Email</span><span class="arrow">→</span></a>
+<a href="https://github.com/Swastik2209" class="link-row"><span>GitHub</span><span class="arrow">→</span></a>
+<a href="https://t.me/AutoMarketing2209Bot" class="link-row"><span>Telegram</span><span class="arrow">→</span></a>
+<a href="https://nexus-image-gen-two.vercel.app" class="link-row"><span>NEXUS AI Products</span><span class="arrow">→</span></a>
+</div></div></div>
 </section>
 
-<footer class="footer">
-<p>Swastik Mishra — AI Systems · Quantitative Finance · Physics</p>
-<div class="footer-links">
-<a href="https://github.com/Swastik2209">GitHub</a>
-<a href="mailto:swastikmishra3558@gmail.com">Email</a>
-<a href="https://t.me/AutoMarketing2209Bot">Telegram</a>
-</div>
+<footer class="ftr">
+<span>Swastik Mishra — AI Systems · Quantitative Finance · Physics</span>
+<div style="display:flex;gap:20px"><a href="https://github.com/Swastik2209">GitHub</a><a href="mailto:swastikmishra3558@gmail.com">Email</a><a href="https://t.me/AutoMarketing2209Bot">Telegram</a></div>
 </footer>
 
 <script>
-// Custom Cursor with Physics
-const cursor=document.getElementById('cursor'),cursorDot=document.getElementById('cursor-dot');
-let mouseX=0,mouseY=0,cursorX=0,cursorY=0;
-document.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;cursorDot.style.left=mouseX+'px';cursorDot.style.top=mouseY+'px'});
-function animateCursor(){cursorX+=(mouseX-cursorX)*0.15;cursorY+=(mouseY-cursorY)*0.15;cursor.style.left=cursorX+'px';cursor.style.top=cursorY+'px';requestAnimationFrame(animateCursor)}
-animateCursor();
-document.querySelectorAll('a,button,.project-visual,.skill-item').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'))});
-
-// GSAP Scroll Reveals
-gsap.registerPlugin(ScrollTrigger);
-document.querySelectorAll('.reveal').forEach(el=>{gsap.fromTo(el,{opacity:0,y:60},{opacity:1,y:0,duration:1,scrollTrigger:{trigger:el,start:'top 85%',toggleActions:'play none none none'}})});
-
-// Hero text reveal
-gsap.fromTo('.hero h1',{opacity:0,y:40},{opacity:1,y:0,duration:1.2,delay:0.3});
-gsap.fromTo('.hero-sub',{opacity:0,y:30},{opacity:1,y:0,duration:1,delay:0.5});
-gsap.fromTo('.hero-cta',{opacity:0,y:20},{opacity:1,y:0,duration:0.8,delay:0.7});
-gsap.fromTo('.hero-stats',{opacity:0,y:20},{opacity:1,y:0,duration:0.8,delay:0.9});
-
-// Magnetic buttons
-document.querySelectorAll('.hero-cta,.contact-link').forEach(btn=>{
-  btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const x=e.clientX-r.left-r.width/2;const y=e.clientY-r.top-r.height/2;btn.style.transform=`translate(${x*0.1}px,${y*0.1}px)`});
-  btn.addEventListener('mouseleave',()=>{btn.style.transform='translate(0,0)'});
+// Cursor
+const c=document.getElementById('cur'),d=document.getElementById('dot');let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;d.style.left=mx+'px';d.style.top=my+'px'});
+!function anim(){cx+=(mx-cx)*.12;cy+=(my-cy)*.12;c.style.left=cx+'px';c.style.top=cy+'px';requestAnimationFrame(anim)}();
+document.querySelectorAll('a,button,.proj-vis,.skill,.tag,.link-row').forEach(el=>{
+  el.addEventListener('mouseenter',()=>c.classList.add('big'));
+  el.addEventListener('mouseleave',()=>c.classList.remove('big'))
 });
 
-// WebGL Background
-(function(){
-  const canvas=document.getElementById('bg-canvas');if(!canvas)return;
-  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
-  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
-  renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  const geo=new THREE.BufferGeometry();const count=200;const pos=new Float32Array(count*3);
-  for(let i=0;i<count*3;i++)pos[i]=(Math.random()-0.5)*20;
-  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  const mat=new THREE.PointsMaterial({color:0x6366f1,size:0.02,transparent:true,opacity:0.4,blending:THREE.AdditiveBlending});
-  const particles=new THREE.Points(geo,mat);scene.add(particles);camera.position.z=5;
-  let frame=0;
-  function animate(){requestAnimationFrame(animate);frame+=0.002;particles.rotation.y=frame*0.3;particles.rotation.x=Math.sin(frame*0.2)*0.1;
-  const tx=(mouseX/innerWidth-0.5)*0.5,ty=(mouseY/innerHeight-0.5)*0.5;
-  camera.position.x+=(tx-camera.position.x)*0.02;camera.position.y+=(-ty-camera.position.y)*0.02;
-  renderer.render(scene,camera)}animate();
-  addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-})();
-
-// Header scroll effect
-addEventListener('scroll',()=>{document.querySelector('.header').style.background=scrollY>50?'rgba(10,10,11,0.95)':'rgba(10,10,11,0.8)'});
+// GSAP
+gsap.registerPlugin(ScrollTrigger);
+document.querySelectorAll('.rv').forEach(el=>{gsap.fromTo(el,{opacity:0,y:40},{opacity:1,y:0,duration:.8,scrollTrigger:{trigger:el,start:'top 85%'}})});
+gsap.fromTo('.hero h1',{opacity:0,y:30},{opacity:1,y:0,duration:1,delay:.2});
+gsap.fromTo('.hero-desc',{opacity:0,y:20},{opacity:1,y:0,duration:.8,delay:.4});
+gsap.fromTo('.hero-btn',{opacity:0,y:20},{opacity:1,y:0,duration:.6,delay:.6});
+gsap.fromTo('.hero-metrics',{opacity:0,y:15},{opacity:1,y:0,duration:.6,delay:.8});
+gsap.fromTo('.photo-wrap',{opacity:0,scale:.95},{opacity:1,scale:1,duration:1,delay:.3});
 
 // Smooth scroll
-document.querySelectorAll('.header-nav a').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'})})});
+document.querySelectorAll('.hdr nav a').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'})})});
+
+// Header opacity on scroll
+addEventListener('scroll',()=>{document.querySelector('.hdr').style.background=scrollY>50?'rgba(9,9,11,0.95)':'rgba(9,9,11,0.72)'});
 </script>
-</body>
-</html>
+</body></html>
